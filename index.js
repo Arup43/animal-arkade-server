@@ -29,12 +29,22 @@ async function run() {
 
         app.get('/toys', async (req, res) => {
             let query = {};
-            if(req.query?.email) {
+            if (req.query?.email) {
                 query = { sellerEmail: req.query.email }
             }
-            const cursor = toyCollection.find(query).limit(20);
-            const toys = await cursor.toArray();
-            res.send(toys);
+            if (req.query?.sort && req.query?.sort === 'ascending') {
+                const cursor = toyCollection.find(query).sort({ price: -1 }).limit(20);
+                const toys = await cursor.toArray();
+                res.send(toys);
+            } else if(req.query?.sort && req.query?.sort === 'descending') {
+                const cursor = toyCollection.find(query).sort({ price: 1 }).limit(20);
+                const toys = await cursor.toArray();
+                res.send(toys);
+            } else {
+                const cursor = toyCollection.find(query).limit(20);
+                const toys = await cursor.toArray();
+                res.send(toys);
+            }
         });
 
         app.get('/toys/:id', async (req, res) => {
@@ -98,7 +108,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');  
+    res.send('Hello World!');
 })
 
 app.listen(port, () => {
