@@ -32,7 +32,7 @@ async function run() {
             if(req.query?.email) {
                 query = { sellerEmail: req.query.email }
             }
-            const cursor = toyCollection.find(query);
+            const cursor = toyCollection.find(query).limit(20);
             const toys = await cursor.toArray();
             res.send(toys);
         });
@@ -76,6 +76,13 @@ async function run() {
             };
             const result = await toyCollection.updateOne(filter, updateDoc);
             res.json(result);
+        });
+
+        app.get('/search-toys', async (req, res) => {
+            const query = req.query.q;
+            const cursor = toyCollection.find({ name: query }).limit(20);
+            const toys = await cursor.toArray();
+            res.send(toys);
         });
 
         // Send a ping to confirm a successful connection
