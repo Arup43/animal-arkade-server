@@ -28,7 +28,11 @@ async function run() {
         const toyCollection = client.db("animalArkade").collection("toys");
 
         app.get('/toys', async (req, res) => {
-            const cursor = toyCollection.find({});
+            let query = {};
+            if(req.query?.email) {
+                query = { sellerEmail: req.query.email }
+            }
+            const cursor = toyCollection.find(query);
             const toys = await cursor.toArray();
             res.send(toys);
         });
@@ -59,7 +63,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Hello World!');  
 })
 
 app.listen(port, () => {
